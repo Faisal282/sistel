@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Halaman Sistel</title>
+	<link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style>
+		body {
+			width: 100%;
+			height: 90vh;
+			background-image: url("img/bg.jpg");
+			background-size: cover;
+			background-repeat: no-repeat;
+			color: aliceblue;
+		}
+
+		input[type="number"] {
+			padding-left: 1vh;
+			border-radius: 3vh;
+		}
+
+		input[type="number"]:focus {
+			outline: none !important;
+			text-decoration: none !important;
+		}
+
+		@media only screen and (max-width: 600px) {
+			body {
+				height: 100vh;
+			}
+
+			label {
+				display: none;
+			}
+
+			input[type="number"] {
+				width: 40vh !important;
+				margin-left: 1.5vh !important;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div id='app'>
+			<div class="row">
+				<div class="col-12">
+					<!-- jika yang diselect adalah daya -->
+					<form>
+						<div class="row mt-5">
+							<div class="col-sm-12">
+								<label for="miliwatts">MILIWATTS</label><br>
+								<input type="number" id="miliwatts" placeholder="masukkan miliwatts"
+									v-model="miliwatts">
+								<button class="btn btn-primary" v-on:click="mWatts">UBAH</button>
+								<buttton class="btn btn-danger" v-on:click="hapusm">HAPUS</buttton>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 mt-5">
+								<label for="watts">WATTS</label><br>
+								<input type="number" id="watts" placeholder="masukkan watts" v-model="watts">
+								<button class="btn btn-primary" v-on:click="Watts">UBAH</button>
+								<buttton class="btn btn-danger" v-on:click="hapusw">HAPUS</buttton>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 mt-5">
+								<label for="dbm">DBM</label><br>
+								<input type="number" id="dbm" placeholder="masukkan dbm" v-model="dbm">
+								<button class="btn btn-primary" v-on:click="Dbm">UBAH</button>
+								<buttton class="btn btn-danger" v-on:click="hapusdbm">HAPUS</buttton>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 mt-5">
+								<label for="dbw">DBW</label><br>
+								<input type="number" id="dbw" placeholder="masukkan dbw" v-model="dbw">
+								<button class="btn btn-primary" v-on:click="Dbw">UBAH</button>
+								<buttton class="btn btn-danger" v-on:click="hapusdbw">HAPUS</buttton>
+							</div>
+						</div>
+						<div class="row">
+							<button class="btn btn-danger" v-on:click="reset">RESET</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+	</script>
+	<script>
+		var vo = new Vue({
+			el: '#app',
+			data: {
+				miliwatts: null,
+				watts: null,
+				dbm: null,
+				dbw: null
+			},
+			methods: {
+				mWatts: function (event) {
+					event.preventDefault();
+					if (miliwatts != '') {
+						this.watts = Number(this.miliwatts / 1000);
+						this.dbm = Number(10 * Math.log10(this.miliwatts / 1)).toFixed(1);
+						this.dbw = Number((10 * Math.log10(this.miliwatts / 1)) - 30);
+					}
+				},
+				Watts: function (event) {
+					event.preventDefault();
+					if (watts != '') {
+						this.miliwatts = Number(this.watts * 1000);
+						this.dbm = Number(10 * Math.log10((this.watts * 1000) / 1)).toFixed(2);
+						this.dbw = Number(10 * Math.log10(this.watts / 1)).toFixed(2);
+					}
+				},
+				Dbm: function (event) {
+					event.preventDefault();
+					this.miliwatts = Number(Math.pow(10, this.dbm / 10));
+					this.dbw = Number(this.dbm - 30).toFixed(2);
+					this.watts = Number((Math.pow(10, this.dbm / 10)) / 1000);
+				},
+				Dbw: function (event) {
+					event.preventDefault();
+					this.miliwatts = Number(((Math.pow(10, this.dbw / 10)) * 1000));
+					this.watts = Number(Math.pow(10, this.dbw / 10)).toFixed(2);
+					this.dbm = Number(this.dbw) + 30;
+				},
+				reset: function (event) {
+					event.preventDefault();
+					this.miliwatts = null;
+					this.watts = null;
+					this.dbm = null;
+					this.dbw = null;
+				},
+				hapusm: function (event) {
+					event.preventDefault();
+					this.miliwatts = null;
+				},
+				hapusw: function (event) {
+					event.preventDefault();
+					this.watts = null;
+				},
+				hapusdbm: function (event) {
+					event.preventDefault();
+					this.dbm = null;
+				},
+				hapusdbw: function (event) {
+					event.preventDefault();
+					this.dbw = null;
+				}
+
+			}
+		});
+	</script>
+</body>
+
+</html>
